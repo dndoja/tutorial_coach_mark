@@ -129,24 +129,12 @@ abstract class AnimatedFocusLightState extends State<AnimatedFocusLight>
         widget.focusAnimationDuration ??
         defaultFocusAnimationDuration;
 
-    TargetPosition? targetPosition;
-    try {
-      targetPosition = getTargetCurrent(
-        _targetFocus,
-        rootOverlay: widget.rootOverlay,
-      );
-    } on NotFoundTargetException catch (e, s) {
-      debugPrint(e.toString());
-      debugPrintStack(stackTrace: s);
-    }
-
-    if (targetPosition == null) {
-      _finish();
-      return;
-    }
+    final TargetPosition targetPosition =
+        getTargetCurrent(_targetFocus, rootOverlay: widget.rootOverlay) ??
+            getEmptyTargetPosition(context, _targetFocus);
 
     safeSetState(() {
-      _targetPosition = targetPosition!;
+      _targetPosition = targetPosition;
 
       _positioned = Offset(
         targetPosition.offset.dx + (targetPosition.size.width / 2),

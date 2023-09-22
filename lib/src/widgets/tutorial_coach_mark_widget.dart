@@ -130,20 +130,11 @@ class TutorialCoachMarkWidgetState extends State<TutorialCoachMarkWidget>
 
     List<Widget> children = <Widget>[];
 
-    TargetPosition? target;
-    try {
-      target = getTargetCurrent(
-        currentTarget!,
-        rootOverlay: widget.rootOverlay,
-      );
-    } on NotFoundTargetException catch (e, s) {
-      debugPrint(e.toString());
-      debugPrintStack(stackTrace: s);
-    }
-
-    if (target == null) {
-      return const SizedBox.shrink();
-    }
+    final TargetPosition target = getTargetCurrent(
+          currentTarget!,
+          rootOverlay: widget.rootOverlay,
+        ) ??
+        getEmptyTargetPosition(context, currentTarget!);
 
     var positioned = Offset(
       target.offset.dx + target.size.width / 2,

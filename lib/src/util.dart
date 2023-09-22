@@ -2,8 +2,28 @@ import 'package:flutter/widgets.dart';
 import 'package:tutorial_coach_mark/src/target/target_focus.dart';
 import 'package:tutorial_coach_mark/src/target/target_position.dart';
 
+import 'target/target_content.dart';
+
 // ignore: constant_identifier_names
 enum ShapeLightFocus { Circle, RRect }
+
+TargetPosition getEmptyTargetPosition(
+  BuildContext context,
+  TargetFocus targetFocus,
+) {
+  final Size size = MediaQuery.of(context).size;
+  final ContentAlign? alignment = targetFocus.contents?.firstOrNull?.align;
+  final double yOffset = alignment == ContentAlign.top
+      ? 124
+      : alignment == ContentAlign.bottom
+          ? size.height - 124
+          : size.height;
+
+  return TargetPosition(
+    const Size(1,1),
+    Offset(size.width / 2, yOffset),
+  );
+}
 
 TargetPosition? getTargetCurrent(
   TargetFocus target, {
@@ -12,12 +32,12 @@ TargetPosition? getTargetCurrent(
   if (target.keyTarget != null) {
     var key = target.keyTarget!;
 
+    BuildContext? context;
     try {
       final RenderBox renderBoxRed =
           key.currentContext!.findRenderObject() as RenderBox;
       final size = renderBoxRed.size;
 
-      BuildContext? context;
       if (rootOverlay) {
         context = key.currentContext!
             .findRootAncestorStateOfType<OverlayState>()
@@ -39,7 +59,7 @@ TargetPosition? getTargetCurrent(
 
       return TargetPosition(size, offset);
     } catch (e) {
-      throw NotFoundTargetException();
+      return null;
     }
   } else {
     return target.targetPosition;
